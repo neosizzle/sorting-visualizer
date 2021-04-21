@@ -1,12 +1,12 @@
 import React from 'react';
-import { getMergeSortAnimations, getTraversalAnimations } from '../sortingAlgorithms/sortingAlgorithms.js';
+import { getBubbleSortAnimations, getMergeSortAnimations, getTraversalAnimations } from '../sortingAlgorithms/sortingAlgorithms.js';
 import './SortingVisualizer.css';
 
 // Change this value for the speed of the animations.
-const ANIMATION_SPEED_MS = 100;
+const ANIMATION_SPEED_MS = 1;
 
 // Change this value for the number of bars (value) in the array.
-const NUMBER_OF_ARRAY_BARS = 10;
+const NUMBER_OF_ARRAY_BARS = 200;
 
 // This is the main color of the array bars.
 const PRIMARY_COLOR = 'turquoise';
@@ -30,16 +30,16 @@ export default class SortingVisualizer extends React.Component {
   resetArray() {
     const array = [];
     for (let i = 0; i < NUMBER_OF_ARRAY_BARS; i++) {
-      array.push(randomIntFromInterval(5, 20));
+      array.push(randomIntFromInterval(5, 600));
     }
     this.setState({ array });
   }
 
   mergeSort() {
     const animations = getMergeSortAnimations(this.state.array);
+    const arrayBars = document.getElementsByClassName('array-bar');
     console.log(animations)
     for (let i = 0; i < animations.length; i++) {
-      const arrayBars = document.getElementsByClassName('array-bar');
       const isColorChange = i % 3 !== 2;
       if (isColorChange) {
         const [barOneIdx, barTwoIdx] = animations[i];
@@ -63,27 +63,51 @@ export default class SortingVisualizer extends React.Component {
   traversal() {
 
     const animations = getTraversalAnimations(this.state.array)
+    console.log(animations)
 
     let animationIndex = 0;
 
     //traverse through animations and display on the screen
     animations.forEach(animation => {
+      //get arrays from DOM
+      const arrayBars = document.getElementsByClassName('array-bar');
 
-      setTimeout(() => {
+      //if animation index % 3 != 2, which means its a colour change animation
+      const isColorChange = animationIndex % 3 !== 2;
 
-        //get arrays from DOM
-        const arrayBars = document.getElementsByClassName('array-bar');
+      if (isColorChange) {
 
-        //get desired index 
-        const [barIdx, newBarHeight] = animation;
+        //get the index for desired bars
+        const [barOneIdx, barTwoIdx] = animations[animationIndex];
 
-        //get style from array DOM
-        const barOneStyle = arrayBars[barIdx].style;
+        //get styles for said bars
+        const barOneStyle = arrayBars[barOneIdx].style;
+        const barTwoStyle = arrayBars[barTwoIdx].style;
 
-        //set new height
-        barOneStyle.height = `${newBarHeight}px`;
+        //set the colour according to the index position (colour it red if its every 3 element and decolour it if its not)
+        const color = animationIndex % 3 === 0 ? SECONDARY_COLOR : PRIMARY_COLOR;
 
-      }, animationIndex * ANIMATION_SPEED_MS);
+        //set colour of bars with an incrementing delay
+        setTimeout(() => {
+          barOneStyle.backgroundColor = color;
+          barTwoStyle.backgroundColor = color;
+        }, animationIndex * ANIMATION_SPEED_MS);
+      } else {
+
+        //switching animatopn with incrementing delay
+        setTimeout(() => {
+
+          //get desired index 
+          const [barIdx, newBarHeight] = animation;
+
+          //get style from array DOM
+          const barOneStyle = arrayBars[barIdx].style;
+
+          //set new height
+          barOneStyle.height = `${newBarHeight}px`;
+
+        }, animationIndex * ANIMATION_SPEED_MS);
+      }
 
       //a variable that needs to increment for each settimeout so it can appear with delay every single animation
       animationIndex++
@@ -95,7 +119,56 @@ export default class SortingVisualizer extends React.Component {
   }
 
   bubbleSort() {
+    const animations = getBubbleSortAnimations(this.state.array)
+    const arrayBars = document.getElementsByClassName('array-bar');
+    let isColorChange = false
 
+
+    for (let animationIndex = 0; animationIndex < animations.length; ++animationIndex) {
+      isColorChange = animationIndex % 4 <= 1;
+
+      //colour change animation
+      if (isColorChange) {
+        //get the index for desired bars
+        const [barOneIdx, barTwoIdx] = animations[animationIndex];
+        console.log(animations[animationIndex]
+        )
+        //get styles for said bars
+        const barOneStyle = arrayBars[barOneIdx].style;
+        const barTwoStyle = arrayBars[barTwoIdx].style;
+
+        //set the colour according to the index position 
+        const color = animationIndex % 2 === 0 ? SECONDARY_COLOR : PRIMARY_COLOR;
+
+
+        //set colour of bars with an incrementing delay
+        setTimeout(() => {
+          barOneStyle.backgroundColor = color;
+          barTwoStyle.backgroundColor = color;
+        }, animationIndex * ANIMATION_SPEED_MS);
+      }
+      else {
+        //height change animation
+
+        //switching animatopn with incrementing delay
+        setTimeout(() => {
+
+          //get desired index 
+          const [barIdx, newBarHeight] = animations[animationIndex];
+
+          //get style from array DOM
+          const barOneStyle = arrayBars[barIdx].style;
+
+          //set new height
+          barOneStyle.height = `${newBarHeight}px`;
+
+        }, animationIndex * ANIMATION_SPEED_MS);
+
+
+
+      }
+
+    }
   }
 
   // NOTE: This method will only work if your sorting algorithms actually return
