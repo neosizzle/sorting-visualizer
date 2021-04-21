@@ -6,6 +6,13 @@ export function getMergeSortAnimations(array) {
   return animations;
 }
 
+export function getTraversalAnimations(array) {
+  const animations = [];
+  traversalHelper(array, animations)
+  return animations
+
+}
+
 function mergeSortHelper(
   mainArray,
   startIdx,
@@ -74,4 +81,14 @@ function doMerge(
     animations.push([k, auxiliaryArray[j]]);
     mainArray[k++] = auxiliaryArray[j++];
   }
+}
+
+function traversalHelper(array, animations) {
+
+
+  for (let i = 0; i < array.length; ++i) {
+    //i is the index of the og array to be compared, 20 is the desired height to change
+    animations.push([i, 20])
+  }
+
 }

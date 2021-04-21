@@ -1,12 +1,12 @@
 import React from 'react';
-import {getMergeSortAnimations} from '../sortingAlgorithms/sortingAlgorithms.js';
+import { getMergeSortAnimations, getTraversalAnimations } from '../sortingAlgorithms/sortingAlgorithms.js';
 import './SortingVisualizer.css';
 
 // Change this value for the speed of the animations.
-const ANIMATION_SPEED_MS = 1;
+const ANIMATION_SPEED_MS = 100;
 
 // Change this value for the number of bars (value) in the array.
-const NUMBER_OF_ARRAY_BARS = 310;
+const NUMBER_OF_ARRAY_BARS = 10;
 
 // This is the main color of the array bars.
 const PRIMARY_COLOR = 'turquoise';
@@ -30,13 +30,14 @@ export default class SortingVisualizer extends React.Component {
   resetArray() {
     const array = [];
     for (let i = 0; i < NUMBER_OF_ARRAY_BARS; i++) {
-      array.push(randomIntFromInterval(5, 730));
+      array.push(randomIntFromInterval(5, 20));
     }
-    this.setState({array});
+    this.setState({ array });
   }
 
   mergeSort() {
     const animations = getMergeSortAnimations(this.state.array);
+    console.log(animations)
     for (let i = 0; i < animations.length; i++) {
       const arrayBars = document.getElementsByClassName('array-bar');
       const isColorChange = i % 3 !== 2;
@@ -59,16 +60,42 @@ export default class SortingVisualizer extends React.Component {
     }
   }
 
-  quickSort() {
-    // We leave it as an exercise to the viewer of this code to implement this method.
+  traversal() {
+
+    const animations = getTraversalAnimations(this.state.array)
+
+    let animationIndex = 0;
+
+    //traverse through animations and display on the screen
+    animations.forEach(animation => {
+
+      setTimeout(() => {
+
+        //get arrays from DOM
+        const arrayBars = document.getElementsByClassName('array-bar');
+
+        //get desired index 
+        const [barIdx, newBarHeight] = animation;
+
+        //get style from array DOM
+        const barOneStyle = arrayBars[barIdx].style;
+
+        //set new height
+        barOneStyle.height = `${newBarHeight}px`;
+
+      }, animationIndex * ANIMATION_SPEED_MS);
+
+      //a variable that needs to increment for each settimeout so it can appear with delay every single animation
+      animationIndex++
+    });
   }
 
   heapSort() {
-    // We leave it as an exercise to the viewer of this code to implement this method.
+
   }
 
   bubbleSort() {
-    // We leave it as an exercise to the viewer of this code to implement this method.
+
   }
 
   // NOTE: This method will only work if your sorting algorithms actually return
@@ -88,7 +115,7 @@ export default class SortingVisualizer extends React.Component {
   }
 
   render() {
-    const {array} = this.state;
+    const { array } = this.state;
 
     return (
       <div className="array-container">
@@ -103,7 +130,7 @@ export default class SortingVisualizer extends React.Component {
         ))}
         <button onClick={() => this.resetArray()}>Generate New Array</button>
         <button onClick={() => this.mergeSort()}>Merge Sort</button>
-        <button onClick={() => this.quickSort()}>Quick Sort</button>
+        <button onClick={() => this.traversal()}>Traversal</button>
         <button onClick={() => this.heapSort()}>Heap Sort</button>
         <button onClick={() => this.bubbleSort()}>Bubble Sort</button>
         <button onClick={() => this.testSortingAlgorithms()}>
