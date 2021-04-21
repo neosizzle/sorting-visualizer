@@ -6,9 +6,9 @@ export function getMergeSortAnimations(array) {
   return animations;
 }
 
-export function getTraversalAnimations(array) {
+export function getTraversalAnimations(array, maxValue) {
   const animations = [];
-  traversalHelper(array, animations)
+  traversalHelper(array, animations, maxValue)
   return animations
 
 }
@@ -16,7 +16,14 @@ export function getTraversalAnimations(array) {
 export function getBubbleSortAnimations(array) {
   let animations = []
   if (array.length <= 1) return array
-  bubbleSortHelper(array, animations);
+  bubbleSortTwoHelper(array, animations);
+  return animations
+}
+
+export function getSelectionSortAnimations(array) {
+  let animations = []
+  if (array.length <= 1) return array
+  selectionSortHelper(array, animations);
   return animations
 }
 
@@ -90,7 +97,7 @@ function doMerge(
   }
 }
 
-function traversalHelper(array, animations) {
+function traversalHelper(array, animations, maxValue) {
 
 
   for (let i = 0; i < array.length; ++i) {
@@ -104,7 +111,7 @@ function traversalHelper(array, animations) {
 
     //third push
     //i is the index of the og array to be compared, 20 is the desired height to change
-    animations.push([i, 20])
+    animations.push([i, maxValue])
   }
 
 }
@@ -138,4 +145,78 @@ function bubbleSortHelper(array, animations) {
   }
 
   return animations
+}
+
+function bubbleSortTwoHelper(array, animations) {
+
+  let temp = 0
+
+  for (let i = 0; i < array.length - 1; ++i) {
+    for (let j = 0; j < array.length - i - 1; ++j) {
+
+      if (array[j] > array[j + 1]) {
+        //first push
+        //i and j is the index need to be selected
+        animations.push([j, j + 1])
+
+        //sec push
+        //i is the index which need to be disselected
+        animations.push([j, j + 1])
+
+        temp = array[j];
+        array[j] = array[j + 1];
+        array[j + 1] = temp;
+
+        //third push 
+        //i and j is the index which need to be overrided
+        animations.push([j, array[j]])
+        animations.push([j + 1, array[j + 1]])
+      }
+    }
+  }
+
+  console.log(array)
+  return animations
+}
+
+function selectionSortHelper(array, animations) {
+  let min = array[0]
+  let minIndex = 0
+  let temp = 0;
+
+  for (let i = 0; i < array.length - 1; ++i) {
+
+    //find min and min index
+    for (let j = i + 1; j < array.length; ++j) {
+      if (array[j] < min) {
+        min = array[j];
+        minIndex = j;
+      }
+    }
+
+    //push to animations to select min and index i
+    animations.push([i, minIndex])
+
+    //push to animations to dissclect min and index i
+    animations.push([i, minIndex])
+
+    //push to animations to overwrite index i
+    animations.push([i, min])
+
+    //push to animations to overwrite min index
+    animations.push([minIndex, array[i]])
+
+    //swap min with i
+    temp = array[i]
+    array[i] = min;
+    array[minIndex] = temp;
+    min = array[i + 1]
+
+
+
+  }
+
+  console.log(array)
+  return animations
+
 }
