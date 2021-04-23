@@ -1,4 +1,12 @@
 import React from 'react';
+import { useState } from 'react-dom'
+
+import Button from 'react-bootstrap/Button';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import Container from 'react-bootstrap/Container'
+import Slider from 'react-input-slider';
+
 import { getBubbleSortAnimations, getMergeSortAnimations, getSelectionSortAnimations, getTraversalAnimations } from '../sortingAlgorithms/sortingAlgorithms.js';
 import './SortingVisualizer.css';
 
@@ -20,6 +28,7 @@ export default class SortingVisualizer extends React.Component {
 
     this.state = {
       array: [],
+      sliderCoords: { x: 0.3 }
     };
   }
 
@@ -237,25 +246,64 @@ export default class SortingVisualizer extends React.Component {
   render() {
     const { array } = this.state;
 
+
     return (
-      <div className="array-container">
-        {array.map((value, idx) => (
-          <div
-            className="array-bar"
-            key={idx}
-            style={{
-              backgroundColor: PRIMARY_COLOR,
-              height: `${value}px`,
-            }}></div>
-        ))}
-        <button onClick={() => this.resetArray()}>Generate New Array</button>
-        <button onClick={() => this.mergeSort()}>Merge Sort</button>
-        <button onClick={() => this.traversal()}>Traversal</button>
-        <button onClick={() => this.selectionSort()}>Selection Sort</button>
-        <button onClick={() => this.bubbleSort()}>Bubble Sort</button>
-        <button onClick={() => this.testSortingAlgorithms()}>
-          Test Sorting Algorithms (BROKEN)
-        </button>
+      <div className="">
+
+        <div className="d-flex justify-content-center array-container align-items-baseline">
+          {array.map((value, idx) => (
+            <div
+              className="array-bar"
+              key={idx}
+              style={{
+                backgroundColor: PRIMARY_COLOR,
+                height: `${value}px`,
+              }}></div>
+          ))}
+        </div>
+
+        <Container fluid className="controls-container">
+
+          <Row className="justify-content-center">
+            <Col md="auto" sm={12}>
+              <div className="d-flex">
+                <div>{`x : ${this.state.sliderCoords.x}`}</div>
+                <Slider
+                  axis="x"
+                  xstep={0.1}
+                  xmin={0}
+                  xmax={1}
+                  x={this.state.sliderCoords.x}
+                  onChange={({ x }) => this.setState({ sliderCoords: { x: parseFloat(x.toFixed(2)) } })}
+                />
+                <Button className="control-button" onClick={() => this.resetArray()}>Generate New Array</Button>
+              </div>
+
+            </Col>
+
+            <Col md="auto" sm={12}>
+              <Button className="control-button" onClick={() => this.mergeSort()}>Merge Sort</Button>
+            </Col>
+
+            <Col md="auto" sm={12}>
+              <Button className="control-button" onClick={() => this.traversal()}>BECOME SQUARE</Button>
+            </Col>
+
+            <Col md="auto" sm={12}>
+              <Button className="control-button" onClick={() => this.selectionSort()}>Selection Sort</Button>
+            </Col>
+
+            <Col md="auto" sm={12}>
+              <Button className="control-button" onClick={() => this.bubbleSort()}>Bubble Sort</Button>
+            </Col>
+
+
+          </Row>
+
+
+        </Container>
+
+
       </div>
     );
   }

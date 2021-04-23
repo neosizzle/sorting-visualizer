@@ -1,11 +1,25 @@
 .array-container {
-  position: absolute;
-  left: 100px;
-  /* top: 100px; */
+  margin: 2rem;
 }
 
 .array-bar {
-  width: 2px;
+  width: 0.2rem;
   display: inline-block;
-  margin: 0 1px;
+  margin: 0 0.1rem;
+}
+
+@media only screen and (max-width: 600px) {
+  .array-container {
+    margin: 1rem;
+  }
+  
+  .array-bar {
+    width: 0.02rem;
+    display: inline-block;
+    margin: 0 0.01rem;
+  }
+
+  .control-button{
+    margin: 0.2rem;
+  }
 }
