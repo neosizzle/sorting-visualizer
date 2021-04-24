@@ -1,5 +1,6 @@
 .array-container {
   margin: 2rem;
+  height: 80vh;
 }
 
 .array-bar {
@@ -8,9 +9,13 @@
   margin: 0 0.1rem;
 }
 
+
+
 @media only screen and (max-width: 600px) {
   .array-container {
     margin: 1rem;
+    height: 80vh;
+
   }
   
   .array-bar {

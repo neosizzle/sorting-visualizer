@@ -7,7 +7,9 @@
     "react": "^16.10.2",
     "react-bootstrap": "^1.5.2",
     "react-dom": "^16.10.2",
+    "react-input-number": "^5.0.19",
     "react-input-slider": "^6.0.0",
+    "react-numeric-input": "^2.2.3",
     "react-scripts": "3.2.0"
   },
   "scripts": {

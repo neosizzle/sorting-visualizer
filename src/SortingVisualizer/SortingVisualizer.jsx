@@ -6,15 +6,15 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Container from 'react-bootstrap/Container'
 import Slider from 'react-input-slider';
+import NumericInput from 'react-numeric-input';
+
 
 import { getBubbleSortAnimations, getMergeSortAnimations, getSelectionSortAnimations, getTraversalAnimations } from '../sortingAlgorithms/sortingAlgorithms.js';
 import './SortingVisualizer.css';
 
-// Change this value for the speed of the animations.
-const ANIMATION_SPEED_MS = 1;
+// // Change this value for the speed of the animations.
+// const ANIMATION_SPEED_MS = 1;
 
-// Change this value for the number of bars (value) in the array.
-const NUMBER_OF_ARRAY_BARS = 200;
 
 // This is the main color of the array bars.
 const PRIMARY_COLOR = 'turquoise';
@@ -28,7 +28,11 @@ export default class SortingVisualizer extends React.Component {
 
     this.state = {
       array: [],
-      sliderCoords: { x: 0.3 }
+      sliderCoords: { x: 0.3 },
+      // Change this value for the number of bars (value) in the array.
+      NUMBER_OF_ARRAY_BARS: 50,
+      // Change this value for the speed of the animations.
+      ANIMATION_SPEED_MS: 5
     };
   }
 
@@ -38,8 +42,8 @@ export default class SortingVisualizer extends React.Component {
 
   resetArray() {
     const array = [];
-    for (let i = 0; i < NUMBER_OF_ARRAY_BARS; i++) {
-      array.push(randomIntFromInterval(5, 600));
+    for (let i = 0; i < this.state.NUMBER_OF_ARRAY_BARS; i++) {
+      array.push(randomIntFromInterval(5, 500));
     }
     this.setState({ array });
   }
@@ -58,13 +62,13 @@ export default class SortingVisualizer extends React.Component {
         setTimeout(() => {
           barOneStyle.backgroundColor = color;
           barTwoStyle.backgroundColor = color;
-        }, i * ANIMATION_SPEED_MS);
+        }, i * this.state.ANIMATION_SPEED_MS);
       } else {
         setTimeout(() => {
           const [barOneIdx, newHeight] = animations[i];
           const barOneStyle = arrayBars[barOneIdx].style;
           barOneStyle.height = `${newHeight}px`;
-        }, i * ANIMATION_SPEED_MS);
+        }, i * this.state.ANIMATION_SPEED_MS);
       }
     }
   }
@@ -99,7 +103,7 @@ export default class SortingVisualizer extends React.Component {
         setTimeout(() => {
           barOneStyle.backgroundColor = color;
           barTwoStyle.backgroundColor = color;
-        }, animationIndex * ANIMATION_SPEED_MS);
+        }, animationIndex * this.state.ANIMATION_SPEED_MS);
       } else {
 
         //switching animatopn with incrementing delay
@@ -114,7 +118,7 @@ export default class SortingVisualizer extends React.Component {
           //set new height
           barOneStyle.height = `${newBarHeight}px`;
 
-        }, animationIndex * ANIMATION_SPEED_MS);
+        }, animationIndex * this.state.ANIMATION_SPEED_MS);
       }
 
       //a variable that needs to increment for each settimeout so it can appear with delay every single animation
@@ -148,7 +152,7 @@ export default class SortingVisualizer extends React.Component {
         setTimeout(() => {
           barOneStyle.backgroundColor = color;
           barTwoStyle.backgroundColor = color;
-        }, animationIndex * ANIMATION_SPEED_MS);
+        }, animationIndex * this.state.ANIMATION_SPEED_MS);
       }
       else {
         //height change animation
@@ -165,7 +169,7 @@ export default class SortingVisualizer extends React.Component {
           //set new height
           barOneStyle.height = `${newBarHeight}px`;
 
-        }, animationIndex * ANIMATION_SPEED_MS);
+        }, animationIndex * this.state.ANIMATION_SPEED_MS);
 
 
 
@@ -201,7 +205,7 @@ export default class SortingVisualizer extends React.Component {
         setTimeout(() => {
           barOneStyle.backgroundColor = color;
           barTwoStyle.backgroundColor = color;
-        }, animationIndex * ANIMATION_SPEED_MS);
+        }, animationIndex * this.state.ANIMATION_SPEED_MS);
       }
       else {
         //height change animation
@@ -218,7 +222,7 @@ export default class SortingVisualizer extends React.Component {
           //set new height
           barOneStyle.height = `${newBarHeight}px`;
 
-        }, animationIndex * ANIMATION_SPEED_MS);
+        }, animationIndex * this.state.ANIMATION_SPEED_MS);
 
 
 
@@ -265,35 +269,77 @@ export default class SortingVisualizer extends React.Component {
         <Container fluid className="controls-container">
 
           <Row className="justify-content-center">
-            <Col md="auto" sm={12}>
-              <div className="d-flex">
-                <div>{`x : ${this.state.sliderCoords.x}`}</div>
+
+            <Col lg={2} md="auto" sm={12}>
+              <div className="d-flex align-items-center">
+                <div>Animation speed(ms): </div>
+
+                <NumericInput style={{
+                  input: {
+                    width: '50%'
+                  }
+                }}
+                  min={1}
+                  max={300}
+                  value={this.state.ANIMATION_SPEED_MS}
+                  step={10} onChange={(x) => {
+                    this.setState({
+                      ANIMATION_SPEED_MS: x
+                    })
+
+                  }
+                  } />
+
+
+              </div>
+            </Col>
+
+            <Col lg={2} md="auto" sm={12}>
+              <div className="d-flex align-items-center">
+                <div>Array size : </div>
                 <Slider
                   axis="x"
-                  xstep={0.1}
-                  xmin={0}
-                  xmax={1}
-                  x={this.state.sliderCoords.x}
-                  onChange={({ x }) => this.setState({ sliderCoords: { x: parseFloat(x.toFixed(2)) } })}
+                  xstep={10}
+                  xmin={10}
+                  xmax={300}
+                  x={this.state.NUMBER_OF_ARRAY_BARS}
+                  onChange={({ x }) => {
+                    this.setState({
+                      sliderCoords: {
+                        x
+                      },
+                      NUMBER_OF_ARRAY_BARS: x
+                    })
+
+                    this.resetArray()
+                  }
+                  }
                 />
+
+              </div>
+            </Col>
+
+            <Col lg="auto" md="auto" sm={12}>
+              <div className="d-flex justify-content-center">
+
                 <Button className="control-button" onClick={() => this.resetArray()}>Generate New Array</Button>
               </div>
 
             </Col>
 
-            <Col md="auto" sm={12}>
+            <Col lg="auto" md="auto" sm={12}>
               <Button className="control-button" onClick={() => this.mergeSort()}>Merge Sort</Button>
             </Col>
 
-            <Col md="auto" sm={12}>
+            <Col lg="auto" md="auto" sm={12}>
               <Button className="control-button" onClick={() => this.traversal()}>BECOME SQUARE</Button>
             </Col>
 
-            <Col md="auto" sm={12}>
+            <Col lg="auto" md="auto" sm={12}>
               <Button className="control-button" onClick={() => this.selectionSort()}>Selection Sort</Button>
             </Col>
 
-            <Col md="auto" sm={12}>
+            <Col lg="auto" md="auto" sm={12}>
               <Button className="control-button" onClick={() => this.bubbleSort()}>Bubble Sort</Button>
             </Col>
 
