@@ -16,6 +16,13 @@ export function getTraversalAnimations(array, maxValue) {
 export function getBubbleSortAnimations(array) {
   let animations = []
   if (array.length <= 1) return array
+  bubbleSortHelper(array, animations);
+  return animations
+}
+
+export function getReversedBubbleSortAnimations(array) {
+  let animations = []
+  if (array.length <= 1) return array
   bubbleSortTwoHelper(array, animations);
   return animations
 }
@@ -116,7 +123,7 @@ function traversalHelper(array, animations, maxValue) {
 
 }
 
-function bubbleSortHelper(array, animations) {
+function bubbleSortTwoHelper(array, animations) {
 
   let temp = 0
 
@@ -147,7 +154,7 @@ function bubbleSortHelper(array, animations) {
   return animations
 }
 
-function bubbleSortTwoHelper(array, animations) {
+function bubbleSortHelper(array, animations) {
 
   let temp = 0
 

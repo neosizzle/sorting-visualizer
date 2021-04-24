@@ -5,11 +5,12 @@ import Button from 'react-bootstrap/Button';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Container from 'react-bootstrap/Container'
+import Dropdown from 'react-bootstrap/Dropdown'
 import Slider from 'react-input-slider';
 import NumericInput from 'react-numeric-input';
 
 
-import { getBubbleSortAnimations, getMergeSortAnimations, getSelectionSortAnimations, getTraversalAnimations } from '../sortingAlgorithms/sortingAlgorithms.js';
+import { getBubbleSortAnimations, getReversedBubbleSortAnimations, getMergeSortAnimations, getSelectionSortAnimations, getTraversalAnimations } from '../sortingAlgorithms/sortingAlgorithms.js';
 import './SortingVisualizer.css';
 
 // // Change this value for the speed of the animations.
@@ -75,7 +76,7 @@ export default class SortingVisualizer extends React.Component {
 
   traversal() {
 
-    const animations = getTraversalAnimations(this.state.array, 600)
+    const animations = getTraversalAnimations(this.state.array, 500)
 
     let animationIndex = 0;
 
@@ -231,6 +232,58 @@ export default class SortingVisualizer extends React.Component {
     }
   }
 
+  reverseBubbleSort(){
+    const animations = getReversedBubbleSortAnimations(this.state.array)
+    const arrayBars = document.getElementsByClassName('array-bar');
+    let isColorChange = false
+
+
+    for (let animationIndex = 0; animationIndex < animations.length; ++animationIndex) {
+      isColorChange = animationIndex % 4 <= 1;
+
+      //colour change animation
+      if (isColorChange) {
+        //get the index for desired bars
+        const [barOneIdx, barTwoIdx] = animations[animationIndex];
+
+        //get styles for said bars
+        const barOneStyle = arrayBars[barOneIdx].style;
+        const barTwoStyle = arrayBars[barTwoIdx].style;
+
+        //set the colour according to the index position 
+        const color = animationIndex % 2 === 0 ? SECONDARY_COLOR : PRIMARY_COLOR;
+
+
+        //set colour of bars with an incrementing delay
+        setTimeout(() => {
+          barOneStyle.backgroundColor = color;
+          barTwoStyle.backgroundColor = color;
+        }, animationIndex * this.state.ANIMATION_SPEED_MS);
+      }
+      else {
+        //height change animation
+
+        //switching animatopn with incrementing delay
+        setTimeout(() => {
+
+          //get desired index 
+          const [barIdx, newBarHeight] = animations[animationIndex];
+
+          //get style from array DOM
+          const barOneStyle = arrayBars[barIdx].style;
+
+          //set new height
+          barOneStyle.height = `${newBarHeight}px`;
+
+        }, animationIndex * this.state.ANIMATION_SPEED_MS);
+
+
+
+      }
+
+    }
+  }
+
   // NOTE: This method will only work if your sorting algorithms actually return
   // the sorted arrays; if they return the animations (as they currently do), then
   // this method will be broken.
@@ -322,27 +375,29 @@ export default class SortingVisualizer extends React.Component {
             <Col lg="auto" md="auto" sm={12}>
               <div className="d-flex justify-content-center">
 
-                <Button className="control-button" onClick={() => this.resetArray()}>Generate New Array</Button>
+                <Button className="control-button btn-secondary" onClick={() => this.resetArray()}>Generate New Array</Button>
               </div>
 
             </Col>
 
-            <Col lg="auto" md="auto" sm={12}>
-              <Button className="control-button" onClick={() => this.mergeSort()}>Merge Sort</Button>
+
+            <Col lg={2} md = "auto" sm = {12}>
+            <Dropdown>
+              <Dropdown.Toggle variant="success" id="dropdown-basic">
+                Sorting Algorithms
+              </Dropdown.Toggle>
+
+              <Dropdown.Menu>
+                <Dropdown.Item onClick={() => this.mergeSort()}>Merge Sort</Dropdown.Item>
+                <Dropdown.Item onClick={() => this.selectionSort()}>Selection Sort</Dropdown.Item>
+                <Dropdown.Item onClick={() => this.bubbleSort()}>Bubble Sort</Dropdown.Item>
+                <Dropdown.Item onClick={() => this.reverseBubbleSort()}>Reserve Bubble Sort</Dropdown.Item>
+                <Dropdown.Item onClick={() => this.traversal()}>BECOME SQUARE</Dropdown.Item>
+              </Dropdown.Menu>
+            </Dropdown>
             </Col>
 
-            <Col lg="auto" md="auto" sm={12}>
-              <Button className="control-button" onClick={() => this.traversal()}>BECOME SQUARE</Button>
-            </Col>
-
-            <Col lg="auto" md="auto" sm={12}>
-              <Button className="control-button" onClick={() => this.selectionSort()}>Selection Sort</Button>
-            </Col>
-
-            <Col lg="auto" md="auto" sm={12}>
-              <Button className="control-button" onClick={() => this.bubbleSort()}>Bubble Sort</Button>
-            </Col>
-
+ 
 
           </Row>
 
