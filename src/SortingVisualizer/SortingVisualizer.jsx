@@ -10,7 +10,16 @@ import Slider from 'react-input-slider';
 import NumericInput from 'react-numeric-input';
 
 
-import { getBubbleSortAnimations, getReversedBubbleSortAnimations, getMergeSortAnimations, getSelectionSortAnimations, getTraversalAnimations } from '../sortingAlgorithms/sortingAlgorithms.js';
+import {
+  getBubbleSortAnimations,
+  getReversedBubbleSortAnimations,
+  getMergeSortAnimations,
+  getSelectionSortAnimations,
+  getTraversalAnimations,
+  getCompletedAnimations
+}
+  from '../sortingAlgorithms/sortingAlgorithms.js';
+
 import './SortingVisualizer.css';
 
 // // Change this value for the speed of the animations.
@@ -22,6 +31,8 @@ const PRIMARY_COLOR = 'turquoise';
 
 // This is the color of array bars that are being compared throughout the animations.
 const SECONDARY_COLOR = 'red';
+
+const DONE_COLOR = 'blue';
 
 export default class SortingVisualizer extends React.Component {
   constructor(props) {
@@ -52,8 +63,8 @@ export default class SortingVisualizer extends React.Component {
   mergeSort() {
     const animations = getMergeSortAnimations(this.state.array);
     const arrayBars = document.getElementsByClassName('array-bar');
-    console.log(animations)
-    for (let i = 0; i < animations.length; i++) {
+    let animationIndexCounter = 0
+    for (let i = animationIndexCounter; i < animations.length; animationIndexCounter++, i++) {
       const isColorChange = i % 3 !== 2;
       if (isColorChange) {
         const [barOneIdx, barTwoIdx] = animations[i];
@@ -72,6 +83,10 @@ export default class SortingVisualizer extends React.Component {
         }, i * this.state.ANIMATION_SPEED_MS);
       }
     }
+
+    this.sortingCompletedAnimation(animationIndexCounter * this.state.ANIMATION_SPEED_MS)
+
+
   }
 
   traversal() {
@@ -125,15 +140,18 @@ export default class SortingVisualizer extends React.Component {
       //a variable that needs to increment for each settimeout so it can appear with delay every single animation
       animationIndex++
     });
+
+    this.sortingCompletedAnimation(animationIndex * this.state.ANIMATION_SPEED_MS)
   }
 
   selectionSort() {
     const animations = getSelectionSortAnimations(this.state.array)
     const arrayBars = document.getElementsByClassName('array-bar');
     let isColorChange = false
+    let animationIndexCounter = 0
 
 
-    for (let animationIndex = 0; animationIndex < animations.length; ++animationIndex) {
+    for (let animationIndex = animationIndexCounter; animationIndex < animations.length; ++animationIndex, ++animationIndexCounter) {
       isColorChange = animationIndex % 4 <= 1;
 
       //colour change animation
@@ -178,15 +196,16 @@ export default class SortingVisualizer extends React.Component {
 
     }
 
+    this.sortingCompletedAnimation(animationIndexCounter * this.state.ANIMATION_SPEED_MS)
   }
 
   bubbleSort() {
     const animations = getBubbleSortAnimations(this.state.array)
     const arrayBars = document.getElementsByClassName('array-bar');
     let isColorChange = false
+    let animationIndexCounter = 0
 
-
-    for (let animationIndex = 0; animationIndex < animations.length; ++animationIndex) {
+    for (let animationIndex = animationIndexCounter; animationIndex < animations.length; ++animationIndex, ++animationIndexCounter) {
       isColorChange = animationIndex % 4 <= 1;
 
       //colour change animation
@@ -230,15 +249,19 @@ export default class SortingVisualizer extends React.Component {
       }
 
     }
+
+    this.sortingCompletedAnimation(animationIndexCounter * this.state.ANIMATION_SPEED_MS)
+
   }
 
-  reverseBubbleSort(){
+  reverseBubbleSort() {
     const animations = getReversedBubbleSortAnimations(this.state.array)
     const arrayBars = document.getElementsByClassName('array-bar');
     let isColorChange = false
+    let animationIndexCounter = 0;
 
 
-    for (let animationIndex = 0; animationIndex < animations.length; ++animationIndex) {
+    for (let animationIndex = animationIndexCounter; animationIndex < animations.length; ++animationIndex, ++animationIndexCounter) {
       isColorChange = animationIndex % 4 <= 1;
 
       //colour change animation
@@ -282,6 +305,48 @@ export default class SortingVisualizer extends React.Component {
       }
 
     }
+
+    this.sortingCompletedAnimation(animationIndexCounter * this.state.ANIMATION_SPEED_MS)
+ 
+  }
+
+  sortingCompletedAnimation(delayedAnimationSpeed) {
+    const animations = getCompletedAnimations(this.state.array)
+
+    let animationIndex = 0;
+
+    //traverse through animations and display on the screen
+    animations.forEach(animation => {
+      setTimeout(() => {
+        //get arrays from DOM
+        const arrayBars = document.getElementsByClassName('array-bar');
+
+        //if animation index % 3 != 2, which means its a colour change animation
+        const isColored = animationIndex % 2 == 0;
+
+        //get the index for desired bar
+        const [barOneIdx] = animation;
+
+        //get styles for said bar
+        const barOneStyle = arrayBars[barOneIdx].style;
+
+        console.log(animationIndex + " " + delayedAnimationSpeed)
+
+
+
+        //set colour of bars with an incrementing delay
+        setTimeout(() => {
+          if (isColored) {
+            barOneStyle.backgroundColor = DONE_COLOR
+          } else {
+            barOneStyle.backgroundColor = PRIMARY_COLOR
+          }
+        }, (animationIndex * this.state.ANIMATION_SPEED_MS));
+
+        //a variable that needs to increment for each settimeout so it can appear with delay every single animation
+        animationIndex++
+      }, delayedAnimationSpeed);
+    });
   }
 
   // NOTE: This method will only work if your sorting algorithms actually return
@@ -381,23 +446,26 @@ export default class SortingVisualizer extends React.Component {
             </Col>
 
 
-            <Col lg={2} md = "auto" sm = {12}>
-            <Dropdown>
-              <Dropdown.Toggle variant="success" id="dropdown-basic">
-                Sorting Algorithms
+            <Col lg={2} md="auto" sm={12}>
+              <Dropdown>
+                <Dropdown.Toggle variant="success" id="dropdown-basic">
+                  Sorting Algorithms
               </Dropdown.Toggle>
 
-              <Dropdown.Menu>
-                <Dropdown.Item onClick={() => this.mergeSort()}>Merge Sort</Dropdown.Item>
-                <Dropdown.Item onClick={() => this.selectionSort()}>Selection Sort</Dropdown.Item>
-                <Dropdown.Item onClick={() => this.bubbleSort()}>Bubble Sort</Dropdown.Item>
-                <Dropdown.Item onClick={() => this.reverseBubbleSort()}>Reserve Bubble Sort</Dropdown.Item>
-                <Dropdown.Item onClick={() => this.traversal()}>BECOME SQUARE</Dropdown.Item>
-              </Dropdown.Menu>
-            </Dropdown>
+                <Dropdown.Menu>
+                  <Dropdown.Item onClick={() => {
+                    this.mergeSort()
+
+                  }}>Merge Sort</Dropdown.Item>
+                  <Dropdown.Item onClick={() => this.selectionSort()}>Selection Sort</Dropdown.Item>
+                  <Dropdown.Item onClick={() => this.bubbleSort()}>Bubble Sort</Dropdown.Item>
+                  <Dropdown.Item onClick={() => this.reverseBubbleSort()}>Reserve Bubble Sort</Dropdown.Item>
+                  <Dropdown.Item onClick={() => this.traversal()}>BECOME SQUARE</Dropdown.Item>
+                </Dropdown.Menu>
+              </Dropdown>
             </Col>
 
- 
+
 
           </Row>
 

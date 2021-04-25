@@ -34,6 +34,12 @@ export function getSelectionSortAnimations(array) {
   return animations
 }
 
+export function getCompletedAnimations(array) {
+  const animations = [];
+  completedHelper(array, animations)
+  return animations
+}
+
 function mergeSortHelper(
   mainArray,
   startIdx,
@@ -223,7 +229,17 @@ function selectionSortHelper(array, animations) {
 
   }
 
-  console.log(array)
   return animations
 
+}
+
+function completedHelper(array, animations) {
+  for (let i = 0; i < array.length; i++) {
+    //push to animation array once to select index
+    animations.push([i])
+    //push to animation array once to disselect index
+    animations.push([i])
+  }
+
+  return animations
 }
