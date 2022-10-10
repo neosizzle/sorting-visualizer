@@ -1,4 +1,4 @@
-
+![demo](https://github.com/neosizzle/sorting-visualizer/blob/main/sort_visualizer.gif)
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
